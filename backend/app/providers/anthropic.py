@@ -18,29 +18,8 @@ class AnthropicProvider(BaseProvider):
         return self.client is not None
     
     async def list_models(self) -> list[ModelInfo]:
-        if not self.is_available():
-            return []
-        
-        return [
-            ModelInfo(
-                id="claude-3-opus-20240229",
-                name="Claude 3 Opus",
-                provider=ProviderType.ANTHROPIC,
-                description="Most capable Claude model"
-            ),
-            ModelInfo(
-                id="claude-3-sonnet-20240229",
-                name="Claude 3 Sonnet",
-                provider=ProviderType.ANTHROPIC,
-                description="Balanced performance and speed"
-            ),
-            ModelInfo(
-                id="claude-3-haiku-20240307",
-                name="Claude 3 Haiku",
-                provider=ProviderType.ANTHROPIC,
-                description="Fastest Claude model"
-            ),
-        ]
+        # Return empty list - let user type model name
+        return []
     
     async def generate_response(
         self,

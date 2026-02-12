@@ -18,30 +18,8 @@ class OpenAIProvider(BaseProvider):
         return self.client is not None
     
     async def list_models(self) -> list[ModelInfo]:
-        if not self.is_available():
-            return []
-        
-        # Return commonly used models (API has many fine-tuned variants)
-        return [
-            ModelInfo(
-                id="gpt-4-turbo-preview",
-                name="GPT-4 Turbo",
-                provider=ProviderType.OPENAI,
-                description="Most capable GPT-4 model, optimized for chat"
-            ),
-            ModelInfo(
-                id="gpt-4",
-                name="GPT-4",
-                provider=ProviderType.OPENAI,
-                description="Standard GPT-4 model"
-            ),
-            ModelInfo(
-                id="gpt-3.5-turbo",
-                name="GPT-3.5 Turbo",
-                provider=ProviderType.OPENAI,
-                description="Fast and cost-effective"
-            ),
-        ]
+        # Return empty list - let user type model name
+        return []
     
     async def generate_response(
         self,

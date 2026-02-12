@@ -55,14 +55,7 @@ function App() {
           ...status.ollama.models,
         ];
         setAvailableModels(allModels);
-
-        // Set default models
-        if (status.openai.models.length > 0) {
-          setModelA(status.openai.models[0].id);
-        }
-        if (status.anthropic.models.length > 0) {
-          setModelB(status.anthropic.models[0].id);
-        }
+        // OpenAI and Anthropic now require manual model input
       } catch (e) {
         console.error('Failed to fetch providers:', e);
       } finally {
@@ -357,6 +350,7 @@ function App() {
               streamingContent={streamingContent}
               currentDebater={debateState.current_debater}
               isRunning={debateState.status === 'running'}
+              isCompleted={debateState.status === 'completed'}
               debaterAModel={modelA}
               debaterBModel={modelB}
               debaterAPosition={positionA}

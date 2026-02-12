@@ -30,6 +30,15 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
 }) => {
   const providers: ProviderType[] = ['openai', 'anthropic', 'ollama'];
   const filteredModels = availableModels.filter((m) => m.provider === selectedProvider);
+  
+  // Format provider name for display
+  const formatProviderName = (provider: ProviderType) => {
+    if (provider === 'openai') return 'OpenAI';
+    return provider.charAt(0).toUpperCase() + provider.slice(1);
+  };
+
+  // Check if this provider should allow custom model input
+  const allowCustomModel = selectedProvider === 'openai' || selectedProvider === 'anthropic';
 
   return (
     <div className="p-4 border border-gray-300 rounded-lg bg-white">
@@ -48,7 +57,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
         >
           {providers.map((p) => (
             <option key={p} value={p}>
-              {p.charAt(0).toUpperCase() + p.slice(1)}
+              {formatProviderName(p)}
             </option>
           ))}
         </select>
@@ -59,22 +68,35 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Model
         </label>
-        <select
-          value={selectedModel}
-          onChange={(e) => onModelChange(e.target.value)}
-          disabled={disabled || filteredModels.length === 0}
-          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
-        >
-          {filteredModels.length === 0 ? (
-            <option value="">No models available</option>
-          ) : (
-            filteredModels.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name}
-              </option>
-            ))
-          )}
-        </select>
+        {allowCustomModel ? (
+          <input
+            type="text"
+            value={selectedModel}
+            onChange={(e) => onModelChange(e.target.value)}
+            disabled={disabled}
+            placeholder={selectedProvider === 'openai' 
+              ? "e.g., gpt-4o, gpt-4-turbo, gpt-3.5-turbo" 
+              : "e.g., claude-sonnet-4-20250514, claude-3-5-sonnet-20241022"}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+          />
+        ) : (
+          <select
+            value={selectedModel}
+            onChange={(e) => onModelChange(e.target.value)}
+            disabled={disabled || filteredModels.length === 0}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+          >
+            {filteredModels.length === 0 ? (
+              <option value="">No models available</option>
+            ) : (
+              filteredModels.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
+                </option>
+              ))
+            )}
+          </select>
+        )}
       </div>
 
       {/* Max Tokens Input */}

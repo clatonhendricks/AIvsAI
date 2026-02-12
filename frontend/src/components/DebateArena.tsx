@@ -9,6 +9,7 @@ interface DebateArenaProps {
   streamingContent: { A: string; B: string };
   currentDebater: 'A' | 'B';
   isRunning: boolean;
+  isCompleted: boolean;
   debaterAModel: string;
   debaterBModel: string;
   debaterAPosition: string;
@@ -22,6 +23,7 @@ export const DebateArena: React.FC<DebateArenaProps> = ({
   streamingContent,
   currentDebater,
   isRunning,
+  isCompleted,
   debaterAModel,
   debaterBModel,
   debaterAPosition,
@@ -67,33 +69,48 @@ export const DebateArena: React.FC<DebateArenaProps> = ({
       </div>
 
       {viewMode === 'side-by-side' ? (
-        <div className="flex gap-4 flex-1">
-          {/* Debater A Panel */}
-          <div className="flex-1 min-w-0">
-            <DebatePanel
-              debater="A"
-              position={debaterAPosition}
-              modelName={debaterAModel}
-              turns={turns}
-              streamingContent={streamingContent.A}
-              isActive={isRunning && currentDebater === 'A'}
-            />
+        <div className="flex flex-col flex-1">
+          <div className="flex gap-4 flex-1">
+            {/* Debater A Panel */}
+            <div className="flex-1 min-w-0">
+              <DebatePanel
+                debater="A"
+                position={debaterAPosition}
+                modelName={debaterAModel}
+                turns={turns}
+                streamingContent={streamingContent.A}
+                isActive={isRunning && currentDebater === 'A'}
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="w-1 bg-gray-300 rounded-full" />
+
+            {/* Debater B Panel */}
+            <div className="flex-1 min-w-0">
+              <DebatePanel
+                debater="B"
+                position={debaterBPosition}
+                modelName={debaterBModel}
+                turns={turns}
+                streamingContent={streamingContent.B}
+                isActive={isRunning && currentDebater === 'B'}
+              />
+            </div>
           </div>
 
-          {/* Divider */}
-          <div className="w-1 bg-gray-300 rounded-full" />
-
-          {/* Debater B Panel */}
-          <div className="flex-1 min-w-0">
-            <DebatePanel
-              debater="B"
-              position={debaterBPosition}
-              modelName={debaterBModel}
-              turns={turns}
-              streamingContent={streamingContent.B}
-              isActive={isRunning && currentDebater === 'B'}
-            />
-          </div>
+          {/* Debate Completed Banner for side-by-side */}
+          {isCompleted && turns.length > 0 && (
+            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg text-center">
+              <div className="flex items-center justify-center gap-2 text-amber-700">
+                <span className="text-xl">🏁</span>
+                <span className="font-medium">Debate Completed</span>
+              </div>
+              <p className="text-sm text-amber-600 mt-1">
+                Reached the end of {turns.length} turns
+              </p>
+            </div>
+          )}
         </div>
       ) : (
         /* Chat View */
@@ -184,9 +201,22 @@ export const DebateArena: React.FC<DebateArenaProps> = ({
           )}
 
           {/* Empty state */}
-          {sortedTurns.length === 0 && !streamingContent.A && !streamingContent.B && !isRunning && (
+          {sortedTurns.length === 0 && !streamingContent.A && !streamingContent.B && !isRunning && !isCompleted && (
             <div className="text-center text-gray-400 py-8">
               Waiting for debate to start...
+            </div>
+          )}
+
+          {/* Debate Completed Banner */}
+          {isCompleted && sortedTurns.length > 0 && (
+            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg text-center">
+              <div className="flex items-center justify-center gap-2 text-amber-700">
+                <span className="text-xl">🏁</span>
+                <span className="font-medium">Debate Completed</span>
+              </div>
+              <p className="text-sm text-amber-600 mt-1">
+                Reached the end of {sortedTurns.length} turns
+              </p>
             </div>
           )}
         </div>
