@@ -43,7 +43,7 @@ export const DebatePanel: React.FC<DebatePanelProps> = ({
           </div>
           {isActive && (
             <span className="flex items-center text-sm">
-              <span className="animate-pulse mr-2 text-xl">●</span> Speaking
+              <span className="animate-pulse mr-2 text-xl">●</span> Thinking
             </span>
           )}
         </div>

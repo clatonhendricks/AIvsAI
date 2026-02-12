@@ -17,6 +17,7 @@ interface UseDebateReturn {
   triggerNextTurn: () => void;
   pauseDebate: () => void;
   resumeDebate: () => void;
+  setLoadedDebateState: (state: DebateState) => void;
 }
 
 export function useDebate(): UseDebateReturn {
@@ -176,6 +177,13 @@ export function useDebate(): UseDebateReturn {
     }
   }, []);
 
+  const setLoadedDebateState = useCallback((state: DebateState) => {
+    setDebateState(state);
+    debateIdRef.current = state.id;
+    setError(null);
+    setStreamingContent({ A: '', B: '' });
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -194,5 +202,6 @@ export function useDebate(): UseDebateReturn {
     triggerNextTurn,
     pauseDebate,
     resumeDebate,
+    setLoadedDebateState,
   };
 }

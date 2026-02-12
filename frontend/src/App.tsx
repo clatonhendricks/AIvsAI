@@ -18,12 +18,14 @@ function App() {
     triggerNextTurn,
     pauseDebate,
     resumeDebate,
+    setLoadedDebateState,
   } = useDebate();
 
   // Configuration state
   const [topic, setTopic] = useState('');
   const [mode, setMode] = useState<DebateMode>('manual');
   const [maxTurns, setMaxTurns] = useState(10);
+  const [viewMode, setViewMode] = useState<'chat' | 'side-by-side'>('chat');
   const [availableModels, setAvailableModels] = useState<ModelInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -157,9 +159,13 @@ function App() {
       setPositionB(debateExport.config.debater_b.position);
       setMaxTokensB(debateExport.config.debater_b.max_tokens || 350);
 
-      // Import to backend and start viewing
-      await importDebate(debateExport);
-      alert('Debate loaded successfully! Click Start to continue the debate.');
+      // Import to backend and get the state with turns
+      const importedState = await importDebate(debateExport);
+      
+      // Set the loaded state with turns into the debate hook
+      setLoadedDebateState(importedState);
+      
+      alert(`Debate loaded successfully with ${importedState.turns.length} turns!`);
     } catch (err) {
       console.error('Failed to load debate:', err);
       alert('Failed to load debate file');
@@ -281,7 +287,7 @@ function App() {
 
             {/* Max Turns (for Auto mode) */}
             <div className="bg-white p-4 rounded-lg border border-gray-300">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 flex-wrap">
                 <label className="text-sm font-medium text-gray-700">
                   Max Turns (total):
                 </label>
@@ -296,6 +302,34 @@ function App() {
                 <span className="text-sm text-gray-500">
                   (Limits total exchanges in Auto mode)
                 </span>
+
+                <div className="h-6 w-px bg-gray-300 mx-2" />
+
+                <label className="text-sm font-medium text-gray-700">
+                  View Mode:
+                </label>
+                <div className="inline-flex rounded-lg border border-gray-300 bg-gray-50 p-1">
+                  <button
+                    onClick={() => setViewMode('chat')}
+                    className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                      viewMode === 'chat'
+                        ? 'bg-blue-500 text-white'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    💬 Chat
+                  </button>
+                  <button
+                    onClick={() => setViewMode('side-by-side')}
+                    className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                      viewMode === 'side-by-side'
+                        ? 'bg-blue-500 text-white'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span className="text-blue-500">■</span><span className="text-green-500">■</span> Side by Side
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -327,13 +361,15 @@ function App() {
               debaterBModel={modelB}
               debaterAPosition={positionA}
               debaterBPosition={positionB}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
             />
           </div>
         )}
 
         {/* Control Bar - shown at bottom during active debate */}
         {isDebateActive && (
-          <div className="sticky bottom-4">
+          <div className="sticky bottom-4 mb-16">
             <ControlBar
               status={status}
               mode={mode}
