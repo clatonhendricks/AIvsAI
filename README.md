@@ -1,7 +1,7 @@
 # AI Debater
 
 An AI-powered debate platform where two AI models argue different perspectives on any topic. Watch GPT-4, Claude, and local models (via Ollama) debate in real-time!
-
+[![AIvsAI image preview](https://github.com/user-attachments/assets/e666ed70-818d-4e9a-8171-47a9f1462cc4)](https://github.com/user-attachments/assets/e666ed70-818d-4e9a-8171-47a9f1462cc4)
 ## Features
 
 - **Multi-provider support**: OpenAI (GPT-4, GPT-3.5), Anthropic (Claude), and local models via Ollama
